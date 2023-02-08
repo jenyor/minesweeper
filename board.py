@@ -20,7 +20,7 @@ class Board:
 
         return self
 
-    # Створює дошку з mines & cells випадковим чином, вставляючи у випадкові позиції міни
+    # Створює дошку з mines & cells, вставляючи у випадкові позиції міни
     def generate_cells(self):
         # Генерує всі індекси клітинок.
         # Випадковим чином вибирає позиції для мін
@@ -47,3 +47,14 @@ class Board:
 
     def __repr__(self):
         return repr(self.cells)
+
+    def click_cell(self, index: tuple[int, int], flag: bool):
+        piece = self.cells[index[0]][index[1]]
+        if piece.state == cell.CellState.OPEN:
+            pass
+        elif flag:
+            piece.toogle_flag()
+            return
+        elif piece.state == cell.CellState.CLOSED:
+            piece.open()
+            # TODO: open neighbors recursively

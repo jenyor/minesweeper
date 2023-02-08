@@ -20,3 +20,11 @@ class Cell:
 
     def __repr__(self):
         return f"{self.state} {self.type} MinesAround={self.adjacent_mines}"
+
+    def toogle_flag(self):
+        self.state = (
+            CellState.CLOSED if self.state == CellState.MARKED else CellState.MARKED
+        )
+
+    def open(self):
+        self.state = CellState.OPEN
