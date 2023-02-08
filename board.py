@@ -57,4 +57,21 @@ class Board:
             return
         elif piece.state == cell.CellState.CLOSED:
             piece.open()
-            # TODO: open neighbors recursively
+
+            # Recursively visit adjacent empty cells
+            if piece.type == cell.CellType.MINE:
+                return
+            for hor in range(index[0] - 1, index[0] + 2):
+                for vert in range(index[1] - 1, index[1] + 2):
+                    if (hor, vert) == index:
+                        continue
+                    out_bound = (
+                        hor < 0
+                        or hor >= self.cells_in_board[0]
+                        or vert < 0
+                        or vert >= self.cells_in_board[1]
+                    )
+                    if (not out_bound) and self.cells[hor][
+                        vert
+                    ].type == cell.CellType.PURE:
+                        self.click_cell((hor, vert), False)
