@@ -45,6 +45,34 @@ class Board:
                     cell_row.append(cell.Cell())
             self.cells.append(cell_row)
 
+        self.calculate_adjacent_mines()
+
+    def calculate_adjacent_mines(self):
+        adjacent_cf = []
+        for row in range(-1, 2):
+            for col in range(-1, 2):
+                if not (row == col == 0):
+                    adjacent_cf.append((row, col))
+
+        for row in range(len(self.cells)):
+            for col in range(len(self.cells[row])):
+                self.cells[row][col].adjacent_mines = 0
+                for cf in adjacent_cf:
+                    pos = (row + cf[0], col + cf[1])
+                    if (
+                        self.is_within_board(pos[0], pos[1])
+                        and self.cells[pos[0]][pos[1]].type == cell.CellType.MINE
+                    ):
+                        self.cells[row][col].adjacent_mines += 1
+
+    def is_within_board(self, x: int, y: int):
+        return (
+            x >= 0
+            and x < self.cells_in_board[0]
+            and y >= 0
+            and y < self.cells_in_board[1]
+        )
+
     def __repr__(self):
         return repr(self.cells)
 
@@ -65,13 +93,8 @@ class Board:
                 for vert in range(index[1] - 1, index[1] + 2):
                     if (hor, vert) == index:
                         continue
-                    out_bound = (
-                        hor < 0
-                        or hor >= self.cells_in_board[0]
-                        or vert < 0
-                        or vert >= self.cells_in_board[1]
-                    )
-                    if (not out_bound) and self.cells[hor][
-                        vert
-                    ].type == cell.CellType.PURE:
+                    if (
+                        self.is_within_board(hor, vert)
+                        and self.cells[hor][vert].type == cell.CellType.PURE
+                    ):
                         self.click_cell((hor, vert), False)

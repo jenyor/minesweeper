@@ -51,11 +51,14 @@ class Game:
                 if cur_cell.state == cell.CellState.MARKED:
                     image = self.images["flag"]
                 elif cur_cell.state == cell.CellState.OPEN:
-                    image = (
-                        self.images["background"]
-                        if cur_cell.type == cell.CellType.PURE
-                        else self.images["bomb"]
-                    )
+                    if cur_cell.type == cell.CellType.MINE:
+                        image = self.images["bomb"]
+                    else:
+                        image = (
+                            self.images["background"]
+                            if cur_cell.adjacent_mines == 0
+                            else self.images[str(cur_cell.adjacent_mines)]
+                        )
                 else:
                     image = self.images["block"]
                 self.screen.blit(
