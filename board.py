@@ -5,11 +5,6 @@ import random
 
 class Board:
     def generate_random(self, config: config.Config):
-        """
-        Замінник конструктора
-
-        Генерує випадкову дошку з переданого config'а
-        """
         self.cells_in_board = config.cells_in_board
         self.num_of_mines = config.num_of_mines
         self.found_pure = 0
@@ -20,85 +15,93 @@ class Board:
 
         return self
 
-    # Створює дошку з mines & cells, вставляючи у випадкові позиції міни
+    def get_cells_x(self):
+        return self.cells_in_board[1]
+
+    def get_cells_y(self):
+        return self.cells_in_board[0]
+
+    def get_cell_in_pos(self, idx: tuple[int, int]):
+        return self.cells[idx[0]][idx[1]]
+
+    def get_board_area(self):
+        return self.cells_in_board[0] * self.cells_in_board[1]
+
+    def tuple_index_to_raw(self, index: tuple[int, int]):
+        return index[0] * self.get_cells_x() + index[1]
+
     def generate_cells(self):
-        # Генерує всі індекси клітинок.
-        # Випадковим чином вибирає позиції для мін
-        mines_position = random.sample(
-            list(range(0, self.cells_in_board[0] * self.cells_in_board[1])),
-            self.num_of_mines,
-        )
+        mines_position = random.sample(list(range(0, self.get_board_area())), self.num_of_mines)
         mines_position.sort(reverse=True)
 
-        # Створює двовимірний список з клітинок.
-        # Пушить або звичайну клітинку, або міну, беручи до уваги `mines_position` список
-        for row in range(self.cells_in_board[0]):
+        for row in range(self.get_cells_y()):
             cell_row = []
-            for column in range(self.cells_in_board[1]):
-                if (
-                    len(mines_position) > 0
-                    and mines_position[-1] == row * self.cells_in_board[1] + column
-                ):
-                    cell_row.append(cell.Cell(cell_type=cell.CellType.MINE))
+            for col in range(self.get_cells_x()):
+                is_mine = len(mines_position) and mines_position[-1] == self.tuple_index_to_raw((row, col))
+                if is_mine:
+                    cell_row.append(cell.Cell.new_mine())
                     mines_position.pop(-1)
                 else:
-                    cell_row.append(cell.Cell())
+                    cell_row.append(cell.Cell.new_pure())
+
             self.cells.append(cell_row)
+        self.process_adjacent_cells()
 
-        self.calculate_adjacent_mines()
-
-    def calculate_adjacent_mines(self):
+    def find_adjacent_cells(self):
         adjacent_cf = []
         for row in range(-1, 2):
             for col in range(-1, 2):
                 if not (row == col == 0):
                     adjacent_cf.append((row, col))
 
-        for row in range(len(self.cells)):
-            for col in range(len(self.cells[row])):
-                self.cells[row][col].adjacent_mines = 0
+        for row in range(self.get_cells_y()):
+            for col in range(self.get_cells_x()):
+                neighbors = []
+
                 for cf in adjacent_cf:
                     pos = (row + cf[0], col + cf[1])
-                    if (
-                        self.is_within_board(pos[0], pos[1])
-                        and self.cells[pos[0]][pos[1]].type == cell.CellType.MINE
-                    ):
-                        self.cells[row][col].adjacent_mines += 1
+                    if self.is_within_board((pos[0], pos[1])):
+                        neighbors.append(self.get_cell_in_pos(pos))
 
-    def is_within_board(self, x: int, y: int):
-        return (
-            x >= 0
-            and x < self.cells_in_board[0]
-            and y >= 0
-            and y < self.cells_in_board[1]
-        )
+                self.get_cell_in_pos((row, col)).adjacent_cells = neighbors
+
+    def process_adjacent_cells(self):
+        self.find_adjacent_cells()
+
+        for row in range(self.get_cells_y()):
+            for col in range(self.get_cells_x()):
+                adjacent_mines = 0
+
+                for neighbor in self.get_cell_in_pos((row, col)).adjacent_cells:
+                    adjacent_mines += 1 if neighbor.is_mine() else 0
+
+                self.get_cell_in_pos((row, col)).adjacent_mines = adjacent_mines
+
+    def is_within_board(self, pos: tuple[int, int]):
+        (x, y) = pos
+        return x >= 0 and x < self.get_cells_x() and y >= 0 and y < self.get_cells_y()
 
     def __repr__(self):
         return repr(self.cells)
 
-    def click_cell(self, index: tuple[int, int], flag: bool):
-        piece = self.cells[index[0]][index[1]]
-        if piece.state == cell.CellState.OPEN:
-            pass
+    def click_cell(self, piece: cell.Cell, flag: bool):
+        if piece.is_open():
+            return
+
         elif flag:
-            self.marked_mines += -1 if piece.state == cell.CellState.MARKED else 1
+            self.marked_mines += -1 if piece.is_marked() else 1
             piece.toogle_flag()
-        elif piece.state == cell.CellState.CLOSED:
+
+        elif piece.is_closed():
             piece.open()
 
-            # Recursively visit adjacent empty cells
-            if piece.type == cell.CellType.MINE:
+            if piece.is_mine():
                 return
+
             self.found_pure += 1
             if piece.adjacent_mines != 0:
                 return
-            for hor in range(index[0] - 1, index[0] + 2):
-                for vert in range(index[1] - 1, index[1] + 2):
-                    if (hor, vert) == index:
-                        continue
-                    if (
-                        self.is_within_board(hor, vert)
-                        and self.cells[hor][vert].type == cell.CellType.PURE
-                        and self.cells[hor][vert].state == cell.CellState.CLOSED
-                    ):
-                        self.click_cell((hor, vert), False)
+
+            for neighbor in piece.adjacent_cells:
+                if neighbor.is_pure() and neighbor.is_closed():
+                    self.click_cell(neighbor, False)

@@ -4,7 +4,6 @@ import pygame
 
 import config
 import board
-import cell
 
 
 class GameState(Enum):
@@ -29,55 +28,49 @@ class Game:
     def run(self):
         self.screen = pygame.display.set_mode(self.sizes)
         running = True
+
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+
                 if self.state == GameState.RUN and event.type == pygame.MOUSEBUTTONDOWN:
                     position = pygame.mouse.get_pos()
                     is_right_click = pygame.mouse.get_pressed()[2]
                     self.handle_click(position, is_right_click)
+
             self.draw()
             pygame.display.flip()
 
     def handle_click(self, position: tuple[int, int], right_click: bool):
         idx = position[1] // self.cell_size[1], position[0] // self.cell_size[0]
-        self.board.click_cell(idx, right_click)
-        print("Pure: ", self.board.found_pure, "Flags: ", self.board.marked_mines)
-        if (
-            not right_click
-            and self.board.cells[idx[0]][idx[1]].type == cell.CellType.MINE
-        ):
+        self.board.click_cell(self.board.get_cell_in_pos(idx), right_click)
+
+        if not right_click and self.board.get_cell_in_pos(idx).is_mine():
             self.state = GameState.LOSE
-        if (
-            self.board.found_pure
-            == self.board.cells_in_board[0] * self.board.cells_in_board[1]
-            - self.board.num_of_mines
-        ):
+        if self.board.found_pure == self.board.get_board_area() - self.board.num_of_mines:
             self.state = GameState.WIN
 
         print(self.state)
 
     def draw(self):
-        for row in range(self.board.cells_in_board[0]):
-            for column in range(self.board.cells_in_board[1]):
-                cur_cell = self.board.cells[row][column]
-                if cur_cell.state == cell.CellState.MARKED:
-                    image = self.images["flag"]
-                elif cur_cell.state == cell.CellState.OPEN:
-                    if cur_cell.type == cell.CellType.MINE:
-                        image = self.images["bomb"]
+        for row in range(self.board.get_cells_y()):
+            for col in range(self.board.get_cells_x()):
+                cur_cell = self.board.get_cell_in_pos((row, col))
+                image_path = None
+
+                if cur_cell.is_marked():
+                    image_path = "flag"
+                elif cur_cell.is_open():
+                    if cur_cell.is_mine():
+                        image_path = "bomb"
                     else:
-                        image = (
-                            self.images["background"]
-                            if cur_cell.adjacent_mines == 0
-                            else self.images[str(cur_cell.adjacent_mines)]
-                        )
+                        image_path = "background" if cur_cell.adjacent_mines == 0 else str(cur_cell.adjacent_mines)
                 else:
-                    image = self.images["block"]
-                self.screen.blit(
-                    image, (column * self.cell_size[0], row * self.cell_size[1])
-                )
+                    image_path = "block"
+
+                image = self.images[image_path]
+                self.screen.blit(image, (col * self.cell_size[0], row * self.cell_size[1]))
 
     def load_images(self):
         self.images = {}
