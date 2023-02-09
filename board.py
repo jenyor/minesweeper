@@ -81,13 +81,16 @@ class Board:
         if piece.state == cell.CellState.OPEN:
             pass
         elif flag:
+            self.marked_mines += -1 if piece.state == cell.CellState.MARKED else 1
             piece.toogle_flag()
-            return
         elif piece.state == cell.CellState.CLOSED:
             piece.open()
 
             # Recursively visit adjacent empty cells
             if piece.type == cell.CellType.MINE:
+                return
+            self.found_pure += 1
+            if piece.adjacent_mines != 0:
                 return
             for hor in range(index[0] - 1, index[0] + 2):
                 for vert in range(index[1] - 1, index[1] + 2):
@@ -96,5 +99,6 @@ class Board:
                     if (
                         self.is_within_board(hor, vert)
                         and self.cells[hor][vert].type == cell.CellType.PURE
+                        and self.cells[hor][vert].state == cell.CellState.CLOSED
                     ):
                         self.click_cell((hor, vert), False)

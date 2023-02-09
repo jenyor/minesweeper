@@ -33,16 +33,30 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.state == GameState.RUN and event.type == pygame.MOUSEBUTTONDOWN:
                     position = pygame.mouse.get_pos()
                     is_right_click = pygame.mouse.get_pressed()[2]
                     self.handle_click(position, is_right_click)
-                self.draw()
-                pygame.display.flip()
+            self.draw()
+            pygame.display.flip()
 
     def handle_click(self, position: tuple[int, int], right_click: bool):
         idx = position[1] // self.cell_size[1], position[0] // self.cell_size[0]
         self.board.click_cell(idx, right_click)
+        print("Pure: ", self.board.found_pure, "Flags: ", self.board.marked_mines)
+        if (
+            not right_click
+            and self.board.cells[idx[0]][idx[1]].type == cell.CellType.MINE
+        ):
+            self.state = GameState.LOSE
+        if (
+            self.board.found_pure
+            == self.board.cells_in_board[0] * self.board.cells_in_board[1]
+            - self.board.num_of_mines
+        ):
+            self.state = GameState.WIN
+
+        print(self.state)
 
     def draw(self):
         for row in range(self.board.cells_in_board[0]):
