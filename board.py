@@ -8,29 +8,27 @@ class Board:
     Дошка, що містить у собі таблицю з клітинок, а також зберігає різну статистику, щоб можна було розуміти стан гри
     """
 
-    def __init__(self):
-        self.cells_in_board = (0, 0)
-        self.num_of_mines = 0
+    def __init__(self, cells_in_board: tuple[int, int], num_of_mines: int, cells=[]):
+        """
+        Бажано використовувати метод класу `generate_random`. __init__ для тестування або генерації не випадкової дошки
+        """
+        self.cells_in_board = cells_in_board
+        """Розмір таблиця з клітинок: висота х ширина"""
+        self.num_of_mines = num_of_mines
+        """Кількість мін на полі"""
         self.found_pure = 0
+        """Скільки клітинок на полі, що є звичайними і відкритими"""
         self.marked_mines = 0
-        self.cells = []
+        """Скільки клітинок на полі, що є позначені прапорцем"""
+        self.cells = cells
+        """Таблиця з клітинок"""
 
     @classmethod
     def generate_random(cls, config: config.Config):
         """
         Генерує дошку, випадково розтавляючи міни. Використовуйте замість конструктора `__init__`
         """
-        inst = cls()
-        inst.cells_in_board = config.cells_in_board
-        """Розмір таблиця з клітинок: висота х ширина"""
-        inst.num_of_mines = config.num_of_mines
-        """Кількість мін на полі"""
-        inst.found_pure = 0
-        """Скільки клітинок на полі, що є звичайними і відкритими"""
-        inst.marked_mines = 0
-        """Скільки клітинок на полі, що є позначені прапорцем"""
-        inst.cells = []
-        """Таблиця з клітинок"""
+        inst = cls(config.cells_in_board, config.num_of_mines)
 
         inst.generate_cells()
 

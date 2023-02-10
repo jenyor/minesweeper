@@ -25,7 +25,7 @@ class Game:
         self.state = GameState.RUN
         self.sizes = config.screen_size
         """ Розмір вікна застосунку: ширина х висота"""
-        self.board = board.Board().generate_random(config)
+        self.board = board.Board.generate_random(config)
         """Випадкового згенероване поле гри, яке зберігає в собі різну статистику гри"""
         self.cell_size = (
             self.sizes[0] // self.board.cells_in_board[1],
