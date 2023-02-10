@@ -115,7 +115,7 @@ class Board:
 
     def is_within_board(self, pos: tuple[int, int]):
         """Чи координата не виходить за межі таблиці"""
-        (x, y) = pos
+        (y, x) = pos
         return x >= 0 and x < self.get_cells_x() and y >= 0 and y < self.get_cells_y()
 
     def __repr__(self):
