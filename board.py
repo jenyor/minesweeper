@@ -8,21 +8,31 @@ class Board:
     Дошка, що містить у собі таблицю з клітинок, а також зберігає різну статистику, щоб можна було розуміти стан гри
     """
 
-    def generate_random(self, config: config.Config):
-        self.cells_in_board = config.cells_in_board
+    def __init__(self, cells_in_board: tuple[int, int], num_of_mines: int, cells=[]):
+        """
+        Бажано використовувати метод класу `generate_random`. __init__ для тестування або генерації не випадкової дошки
+        """
+        self.cells_in_board = cells_in_board
         """Розмір таблиця з клітинок: висота х ширина"""
-        self.num_of_mines = config.num_of_mines
+        self.num_of_mines = num_of_mines
         """Кількість мін на полі"""
         self.found_pure = 0
         """Скільки клітинок на полі, що є звичайними і відкритими"""
         self.marked_mines = 0
         """Скільки клітинок на полі, що є позначені прапорцем"""
-        self.cells = []
+        self.cells = cells
         """Таблиця з клітинок"""
 
-        self.generate_cells()
+    @classmethod
+    def generate_random(cls, config: config.Config):
+        """
+        Генерує дошку, випадково розтавляючи міни. Використовуйте замість конструктора `__init__`
+        """
+        inst = cls(config.cells_in_board, config.num_of_mines)
 
-        return self
+        inst.generate_cells()
+
+        return inst
 
     def get_cells_x(self):
         """Розмір поля за координатою х - ширина"""
@@ -35,6 +45,9 @@ class Board:
     def get_cell_in_pos(self, idx: tuple[int, int]):
         """Клітинку на певній позиції у таблиці"""
         return self.cells[idx[0]][idx[1]]
+
+    def get_all_cells(self):
+        return self.cells
 
     def get_board_area(self):
         """Площа поля: загальна к-сть клітинок"""
@@ -100,7 +113,7 @@ class Board:
 
     def is_within_board(self, pos: tuple[int, int]):
         """Чи координата не виходить за межі таблиці"""
-        (x, y) = pos
+        (y, x) = pos
         return x >= 0 and x < self.get_cells_x() and y >= 0 and y < self.get_cells_y()
 
     def __repr__(self):
