@@ -19,11 +19,13 @@ class Config:
         self.difficulty = difficulty
         """Один з пресетів складності гри (easy, medium, hard, custom)"""
     def check_values(self):
-        if(self.difficulty != "easy" and self.difficulty != "medium" and self.difficulty != "hard" and self.difficulty != "custom"):
+        if (self.difficulty != "easy" and self.difficulty != "medium" and
+                self.difficulty != "hard" and self.difficulty != "custom"):
             raise Exception("There is no such difficulty")
-        elif(self.screen_size[0] <= 0 or self.screen_size[1] <= 0 or self.num_of_mines <= 0 or self.cells_in_board[0] <= 0 or self.cells_in_board[1] <= 0):
+        elif (self.screen_size[0] <= 0 or self.screen_size[1] <= 0 or
+              self.num_of_mines <= 0 or self.cells_in_board[0] <= 0 or self.cells_in_board[1] <= 0):
             raise Exception("Values of screen size, number of mines and fields can't be 0 or negative")
-        elif(self.num_of_mines >= self.cells_in_board[0] * self.cells_in_board[1]):
+        elif (self.num_of_mines >= self.cells_in_board[0] * self.cells_in_board[1]):
             raise Exception("Too much mines for this field")
 
     def set_difficulty(self):
@@ -37,4 +39,4 @@ class Config:
             case "hard":
                 self.num_of_mines = 99
                 self.cells_in_board = (16, 30)
-                self.screen_size = (1240, 670)        
+                self.screen_size = (1240, 670)
