@@ -54,7 +54,7 @@ class Board:
         return self.cells_in_board[0] * self.cells_in_board[1]
 
     def tuple_index_to_raw(self, index: tuple[int, int]):
-        """Номер у таблиці за індексом, так якби рядки таблиці стали в один рядк"""
+        """Номер у таблиці за індексом, так якби рядки таблиці стали в один рядок"""
         return index[0] * self.get_cells_x() + index[1]
 
     def generate_cells(self):

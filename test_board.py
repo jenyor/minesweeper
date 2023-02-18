@@ -7,7 +7,7 @@ from cell import Cell
 
 def test_generate_random():
     MAGIC_NUM = 10
-    board1 = Board.generate_random(config.Config((MAGIC_NUM, MAGIC_NUM), MAGIC_NUM, (1, 1)))
+    board1 = Board.generate_random(config.Config((MAGIC_NUM, MAGIC_NUM), MAGIC_NUM, (1, 1), "custom"))
 
     num_of_mines = 0
     for piece in chain.from_iterable(board1.get_all_cells()):
@@ -18,7 +18,7 @@ def test_generate_random():
 
 def test_find_adjacent_cells():
     size = (4, 6)
-    board = Board.generate_random(config.Config(size, size[1], (1, 1)))
+    board = Board.generate_random(config.Config(size, size[1], (1, 1), "custom"))
 
     assert board.get_cell_in_pos((0, 1)).adjacent_cells == [
         board.cells[0][0],
