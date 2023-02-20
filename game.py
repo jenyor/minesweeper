@@ -32,7 +32,7 @@ class Game:
             self.sizes[1] // self.board.cells_in_board[0],
         )
         """Розмір одної клітинки на екрані: ширина х висота """
-
+        self.configuration = config
         self.load_images()
 
     def run(self):
@@ -54,11 +54,16 @@ class Game:
                     # [2] - третій елемент tuple, який містить у собі bool значення, чи натиснута права кнопка
                     is_right_click = pygame.mouse.get_pressed()[2]
                     self.handle_click(position, is_right_click)
-
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        print("It's great to press Space")
+                    if event.key == pygame.K_ESCAPE:
+                        print("Goodbye")
+                        running = False    
             self.draw()
             pygame.display.flip()
             # Зменшити навантаження на CPU
-            time.sleep(0.1)
+            # time.sleep(0.1)
 
     def handle_click(self, position: tuple[int, int], right_click: bool):
         """
@@ -75,8 +80,7 @@ class Game:
             self.state = GameState.LOSE
         if self.board.found_pure == self.board.get_board_area() - self.board.num_of_mines:
             self.state = GameState.WIN
-
-        print(self.state)
+        self.get_results()
 
     def draw(self):
         """
@@ -118,3 +122,20 @@ class Game:
             image = pygame.transform.scale(image, self.cell_size)
             # Розширення нам не потрібне у назві спрайта
             self.images[filename.split(".")[0]] = image
+
+    def get_results(self):
+        match self.state:
+            case GameState.WIN:
+                self.screen.fill("#347606")
+            case GameState.LOSE:
+                for x in range(0, self.board.get_cells_x()):
+                    for y in range(0, self.board.get_cells_y()):
+                        if self.board.get_cell_in_pos((x, y)).is_mine():
+                            self.board.get_cell_in_pos((x, y)).open()
+                self.draw()
+                pygame.display.flip()
+                lose = pygame.image.load('sprites/lose.png')
+                pygame.time.delay(2000)
+                self.screen.blit(lose, (50, 20))
+                
+
