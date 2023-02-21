@@ -2,14 +2,14 @@ from enum import Enum
 
 
 class CellType(Enum):
-    """Тип клітинки: звичайна або міна"""
+    """Type of cell: normal or mine"""
 
     PURE = 0
     MINE = 1
 
 
 class CellState(Enum):
-    """Стан клітики: закрита, відкрита чи відмічена прапорцем"""
+    """Cell state: closed, open or marked with flag"""
 
     CLOSED = 0
     OPEN = 1
@@ -18,41 +18,41 @@ class CellState(Enum):
 
 class Cell:
     """
-    Найменша одиниця сапера - клітинка, яка може бути різних типів і мати різний стан
+    The smallest unit of the minesweeper game - a cell that can have different types and states
 
-    Також зберігає у собі кільксть сусідніх полів, які мають у собі міну, щоб легше було відкривати рекурсивно сусідні поля, \
-    і самі сусідні клітинки (щоб не виходити за межі поля, яке буде тримати клітинки у собі)
+    Also stores the number of neighboring fields that have a mine so that recursively opening neighboring fields is easier,
+    and the neighboring cells themselves (so as not to go beyond the boundaries of the field, which will hold the cells)
     """
 
     def __init__(self, cell_type=CellType.PURE):
         self.state = CellState.CLOSED
-        """Стан клітинки"""
+        """Cell state"""
         self.type = cell_type
-        """Тип клітинки"""
+        """Cell type"""
         self.adjacent_mines = None
-        """Кількість сусідніх клітинок, що мають тип - `MINE`"""
+        """The number of adjacent cells that have the type `MINE`"""
         self.adjacent_cells = []
-        """Всі сусідні клітинки у межах квадрата 3х3, де поточна клітинка є центром і не додається у цей список"""
+        """All neighboring cells within a 3x3 square where the current cell is the center and is not added to this list"""
 
     @classmethod
     def new_mine(cls):
-        """Створення клітинку-міну"""
+        """Creating a mine cell"""
         return cls(CellType.MINE)
 
     @classmethod
     def new_pure(cls):
-        """Створення звичайну клітинку"""
+        """Creating a normal cell"""
         return cls(CellType.PURE)
 
     def __repr__(self):
         return f"{self.state} {self.type} MinesAround={self.adjacent_mines}"
 
     def toogle_flag(self):
-        """Змінити стан прапорця на протилежний"""
+        """Toggle the flag state"""
         self.state = CellState.CLOSED if self.state == CellState.MARKED else CellState.MARKED
 
     def open(self):
-        """Відкрити клітинку"""
+        """Open the cell"""
         self.state = CellState.OPEN
 
     def is_mine(self):

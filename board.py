@@ -5,28 +5,28 @@ import random
 
 class Board:
     """
-    Дошка, що містить у собі таблицю з клітинок, а також зберігає різну статистику, щоб можна було розуміти стан гри
+    Board containing a table of cells and storing various statistics to understand the game state
     """
 
     def __init__(self, cells_in_board: tuple[int, int], num_of_mines: int, cells=[]):
         """
-        Бажано використовувати метод класу `generate_random`. __init__ для тестування або генерації не випадкової дошки
+        It is recommended to use the class method `generate_random`. __init__ for testing or generating a non-random board
         """
         self.cells_in_board = cells_in_board
-        """Розмір таблиця з клітинок: висота х ширина"""
+        """Size of table with cells: height x width"""
         self.num_of_mines = num_of_mines
-        """Кількість мін на полі"""
+        """Number of mines on the field"""
         self.found_pure = 0
-        """Скільки клітинок на полі, що є звичайними і відкритими"""
+        """How many cells on the field are ordinary and open"""
         self.marked_mines = 0
-        """Скільки клітинок на полі, що є позначені прапорцем"""
+        """How many cells on the field are marked with a flag"""
         self.cells = cells
-        """Таблиця з клітинок"""
+        """Table with cells"""
 
     @classmethod
     def generate_random(cls, config: config.Config):
         """
-        Генерує дошку, випадково розтавляючи міни. Використовуйте замість конструктора `__init__`
+        Generates a board by randomly placing mines. Use instead of the constructor `__init__`
         """
         inst = cls(config.cells_in_board, config.num_of_mines)
 
@@ -35,31 +35,31 @@ class Board:
         return inst
 
     def get_cells_x(self):
-        """Розмір поля за координатою х - ширина"""
+        """Size of the field along the x axis - width"""
         return self.cells_in_board[1]
 
     def get_cells_y(self):
-        """Розмір поля за координатою y - висота"""
+        """Size of the field along the y axis - height"""
         return self.cells_in_board[0]
 
     def get_cell_in_pos(self, idx: tuple[int, int]):
-        """Клітинку на певній позиції у таблиці"""
+        """The cell at a certain position in the table"""
         return self.cells[idx[0]][idx[1]]
 
     def get_all_cells(self):
         return self.cells
 
     def get_board_area(self):
-        """Площа поля: загальна к-сть клітинок"""
+        """Field area: total number of cells"""
         return self.cells_in_board[0] * self.cells_in_board[1]
 
     def tuple_index_to_raw(self, index: tuple[int, int]):
-        """Номер у таблиці за індексом, так якби рядки таблиці стали в один рядок"""
+        """Number in the table by index, as if the rows of the table were in one row"""
         return index[0] * self.get_cells_x() + index[1]
 
     def generate_cells(self):
-        """Випадковим чином згенерувати таблицю з клітинок та розставити міни"""
-        # Генеруємо всі індекси таблиці і вибираємо ті, куди будемо ставити міни
+        """Randomly generate a table of cells and place mines"""
+        # Generate all table indexes and select those where we will put mines
         mines_position = random.sample(list(range(0, self.get_board_area())), self.num_of_mines)
         mines_position.sort(reverse=True)
 
@@ -67,7 +67,7 @@ class Board:
             cell_row = []
             for col in range(self.get_cells_x()):
                 is_mine = len(mines_position) and mines_position[-1] == self.tuple_index_to_raw((row, col))
-                # Створюємо міну або звичайну клітинку залежно від того, чи був номер цієї клітинки обраний випадковим чином
+                # Create a mine or an ordinary cell depending on whether the number of this cell was randomly selected
                 if is_mine:
                     cell_row.append(cell.Cell.new_mine())
                     mines_position.pop(-1)
@@ -78,9 +78,9 @@ class Board:
         self.process_adjacent_cells()
 
     def find_adjacent_cells(self):
-        """Для кожної клітинки формуємо список, де містяться всі сусідні клітинки, які не виходять за межі таблиці"""
+        """For each cell, form a list containing all neighboring cells that do not go beyond the table boundaries"""
         adjacent_cf = []
-        # 3x3 - без центра
+        # 3x3 - without the center
         for row in range(-1, 2):
             for col in range(-1, 2):
                 if not (row == col == 0):
@@ -92,14 +92,14 @@ class Board:
 
                 for cf in adjacent_cf:
                     pos = (row + cf[0], col + cf[1])
-                    # Перевірка, чи не виходить координата за межі таблиці
+                    # Check that the coordinate does not go beyond the table boundaries
                     if self.is_within_board((pos[0], pos[1])):
                         neighbors.append(self.get_cell_in_pos(pos))
 
                 self.get_cell_in_pos((row, col)).adjacent_cells = neighbors
 
     def process_adjacent_cells(self):
-        """Знайти скільки сусідніх мін має кожна клітинка на дошці"""
+        """Find out how many neighboring mines each cell on the board has"""
         self.find_adjacent_cells()
 
         for row in range(self.get_cells_y()):
@@ -112,7 +112,7 @@ class Board:
                 self.get_cell_in_pos((row, col)).adjacent_mines = adjacent_mines
 
     def is_within_board(self, pos: tuple[int, int]):
-        """Чи координата не виходить за межі таблиці"""
+        """Does the coordinate not go beyond the table boundaries"""
         (y, x) = pos
         return x >= 0 and x < self.get_cells_x() and y >= 0 and y < self.get_cells_y()
 
@@ -120,7 +120,7 @@ class Board:
         return repr(self.cells)
 
     def click_cell(self, piece: cell.Cell, flag: bool):
-        """Натиснення на клітинку. Викликається рекурсивно для всіх сусідніх пустих клітинок у деяких випадках"""
+        """Click on a cell. Recursively called for all adjacent empty cells in some cases"""
         if piece.is_open():
             return
 
@@ -138,7 +138,7 @@ class Board:
             if piece.adjacent_mines != 0:
                 return
 
-            # Рекурсивний виклик для сусідніх клітин, якщо вони закриті, не міни, і якщо поточна клітинка немає мін поруч
+            # Recursive call for adjacent cells if they are closed, not mines, and if the current cell has no mines nearby
             for neighbor in piece.adjacent_cells:
                 if neighbor.is_pure() and neighbor.is_closed():
                     self.click_cell(neighbor, False)
