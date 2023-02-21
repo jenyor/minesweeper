@@ -55,6 +55,9 @@ class Cell:
         """Відкрити клітинку"""
         self.state = CellState.OPEN
 
+    def close(self):
+        self.state = CellState.CLOSED
+
     def is_mine(self):
         return self.type == CellType.MINE
 
