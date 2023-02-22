@@ -160,7 +160,7 @@ class Game:
         minutes = int(ticks/60000 % 24)
         # Better looking after 1 minute
         if seconds < 10 and minutes > 0:
-            seconds = f"0{seconds:2d}"
+            seconds = f"0{seconds}"
         # If time spent < 1 minute, we don't need to show 0 minutes
         if minutes == 0:
             font = pygame.font.SysFont("Times New Roman", 40).render(f"{seconds}", True, 'gray')
@@ -174,7 +174,7 @@ class Game:
         # Number of flags left is a difference between number of mines and used flags
         flags_left = self.board.num_of_mines - self.board.marked_mines
         font = pygame.font.SysFont("Times New Roman", 40).render(f"{flags_left:2d}", True, 'gray')
-        self.screen.blit(flags_image, (self.sizes[0] / 3.7, 8))
+        self.screen.blit(flags_image, (self.sizes[0] / 3.8, 8))
         self.screen.blit(font, (self.sizes[0] / 3.3, 3))
 
     """Draws text for result: win or lose"""
@@ -182,7 +182,7 @@ class Game:
         # shows the mines if we lose
         self.draw()
         pygame.display.flip()
-        pygame.time.wait(2000)
+        pygame.time.wait(1000)
         # creates another display to lay on the previous screen with board
         scrn = pygame.display.set_mode((self.sizes[0], self.sizes[1]))
         scrn.fill("black")
@@ -192,14 +192,17 @@ class Game:
         else:
             color = "#800d0d"
         text = pygame.font.SysFont('Times New Roman', 80).render(f"You {result}!", True, color)
-        text2 = pygame.font.SysFont('Times New Roman', 32).render('Press SPACE to restart, ESC to exit', True, "gray")
+        text2 = pygame.font.SysFont('Times New Roman', 32).render('Press SPACE to restart', True, "gray")
+        text3 = pygame.font.SysFont('Times New Roman', 32).render("ESC to exit", True, "gray")
         # field for the text
         textRect = text.get_rect()
         # result will be shown higher than info about restarting game
         textRect.center = (self.sizes[0]/2, self.sizes[1]/2.6)
         scrn.blit(text, textRect)
-        textRect.center = (self.sizes[0]/2.3, self.sizes[1]/1.9)
+        textRect.center = (self.sizes[0]/2, self.sizes[1]/1.7)
         scrn.blit(text2, textRect)
+        textRect.center = (self.sizes[0]/2, self.sizes[1]/1.4)
+        scrn.blit(text3, textRect)
         pygame.display.flip()
 
     """Gets results for the game. GameState contains info about game state"""

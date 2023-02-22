@@ -21,7 +21,7 @@ def main():
                         help="Presets of difficulty (easy, medium, hard) or custom", default="custom")
 
     parser.add_argument("--screensize", nargs='+', type=int,
-                        help="Size of the window (width and height in pixels)", default=(700, 750))
+                        help="Size of the window (width and height in pixels)", default=())
 
     args = parser.parse_args()
     game_config = config.Config(tuple(args.blocks), args.mines, tuple(args.screensize), args.difficulty)
