@@ -42,7 +42,7 @@ class Game:
         self.screen = pygame.display.set_mode(self.sizes)
         running = True
         restart = False
-        clock = pygame.time.Clock()
+        stopwatch_image = self.get_stopwatch_image()
 
         while running:
 
@@ -66,7 +66,7 @@ class Game:
             if self.state == GameState.RUN:
                 self.draw()
                 pygame.display.flip()
-            self.stopwatch(clock)
+            self.stopwatch(stopwatch_image)
         self.board.close_all_cells()
         return restart
 
@@ -129,13 +129,27 @@ class Game:
             # We don't need the extension in the sprite name
             self.images[filename.split(".")[0]] = image
 
-    def stopwatch(self, clock):
+    def get_stopwatch_image(self):
+        stopwatch_image = pygame.image.load(os.path.join("sprites", "stopwatch.png"))
+        stopwatch_image = pygame.transform.scale(stopwatch_image, (32, 32))
+        stopwatch_image.set_colorkey('black')
+        return stopwatch_image
+
+    def stopwatch(self, stopwatch_image):
         self.screen.fill('black')
         pygame.font.init()
+        clock = pygame.time.Clock()
+        self.screen.blit(stopwatch_image, (self.sizes[0] / 1.4, 8))
         ticks = pygame.time.get_ticks()
         seconds = int(ticks/1000 % 60)
-        font = pygame.font.SysFont("Times New Roman", 34).render(f"{seconds:2d}", True, 'green')
-        self.screen.blit(font, (0, 0))
+        minutes = int(ticks/60000 % 24)
+        if seconds < 10 and minutes > 0:
+            seconds = f"0{seconds}"
+        if minutes == 0:
+            font = pygame.font.SysFont("Times New Roman", 40).render(f"{seconds}", True, 'gray')
+        else:
+            font = pygame.font.SysFont("Times New Roman", 40).render(f"{minutes:2d}:{seconds}", True, 'gray')
+        self.screen.blit(font, (self.sizes[0] / 1.3, 3))
         clock.tick(60)
 
     def get_picture_result(self, result):
