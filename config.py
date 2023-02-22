@@ -43,4 +43,4 @@ class Config:
             case "hard":
                 self.num_of_mines = 99
                 self.cells_in_board = (16, 30)
-                self.screen_size = (1240, 670)
+                self.screen_size = (1240, 720)

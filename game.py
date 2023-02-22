@@ -28,7 +28,7 @@ class Game:
         """A randomly generated game field that stores various game statistics"""
         self.cell_size = (
             self.sizes[0] // self.board.cells_in_board[1],
-            self.sizes[1] // self.board.cells_in_board[0],
+            (self.sizes[1] - 50) // self.board.cells_in_board[0],
         )
         """The size of one cell on the screen: width x height"""
 
@@ -42,8 +42,10 @@ class Game:
         self.screen = pygame.display.set_mode(self.sizes)
         running = True
         restart = False
+        clock = pygame.time.Clock()
 
         while running:
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -64,6 +66,7 @@ class Game:
             if self.state == GameState.RUN:
                 self.draw()
                 pygame.display.flip()
+            self.stopwatch(clock)
         self.board.close_all_cells()
         return restart
 
@@ -74,15 +77,16 @@ class Game:
         According to the coordinates, it finds the necessary cell on the board (`board`) and calls the click function for it
         """
         # Index of the cell according to the passed coordinates
-        idx = position[1] // self.cell_size[1], position[0] // self.cell_size[0]
-        self.board.click_cell(self.board.get_cell_in_pos(idx), right_click)
+        if position[1] - 50 > 0:
+            idx = (position[1] - 50) // self.cell_size[1],  position[0] // self.cell_size[0]
+            self.board.click_cell(self.board.get_cell_in_pos(idx), right_click)
 
         # Check if the game can be considered finished
-        if not right_click and self.board.get_cell_in_pos(idx).is_mine():
-            self.state = GameState.LOSE
-        if self.board.found_pure == self.board.get_board_area() - self.board.num_of_mines:
-            self.state = GameState.WIN
-        self.get_results()
+            if not right_click and self.board.get_cell_in_pos(idx).is_mine():
+                self.state = GameState.LOSE
+            if self.board.found_pure == self.board.get_board_area() - self.board.num_of_mines:
+                self.state = GameState.WIN
+            self.get_results()
 
     def draw(self):
         """
@@ -109,7 +113,7 @@ class Game:
                 image = self.images[image_path]
                 # Display the image on the screen, specifying the upper left pixel
                 # The images were transformed to the correct sizes for us in the `load_images` method
-                self.screen.blit(image, (col * self.cell_size[0], row * self.cell_size[1]))
+                self.screen.blit(image, (col * self.cell_size[0], 50 + row * self.cell_size[1]))
 
     def load_images(self):
         """
@@ -124,6 +128,15 @@ class Game:
             image = pygame.transform.scale(image, self.cell_size)
             # We don't need the extension in the sprite name
             self.images[filename.split(".")[0]] = image
+
+    def stopwatch(self, clock):
+        self.screen.fill('black')
+        pygame.font.init()
+        ticks = pygame.time.get_ticks()
+        seconds = int(ticks/1000 % 60)
+        font = pygame.font.SysFont("Times New Roman", 34).render(f"{seconds:2d}", True, 'green')
+        self.screen.blit(font, (0, 0))
+        clock.tick(60)
 
     def get_picture_result(self, result):
         pygame.font.init()
