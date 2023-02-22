@@ -56,6 +56,7 @@ class Cell:
         self.state = CellState.OPEN
 
     def close(self):
+        """Close the cell"""
         self.state = CellState.CLOSED
 
     def is_mine(self):

@@ -5,6 +5,10 @@ import sys
 
 
 def main():
+    """
+    Creates a argparse.ArgumentParser class.
+    It parses values, written to console and sets some configuration of the game
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-m", "--mines", type=int,
@@ -21,15 +25,21 @@ def main():
 
     args = parser.parse_args()
     game_config = config.Config(tuple(args.blocks), args.mines, tuple(args.screensize), args.difficulty)
+    """
+    Trying to check values of the config, to avoid too big amount of mines or negative screen size, fields or mines
+    """
     try:
         game_config.check_values()
     except Exception as err:
         print(f"\n\033[31m ERROR: {err.args[0]} \n\033[0m")
         sys.exit(1)
+    """If some Exception occured, it will tell user what's the problem in program and exit from the game"""
     start = True
+    """Returns true if Space key pressed. Space is used for restart game with the same configuration and board"""
     while start:
         game_config.set_difficulty()
         start = game.Game(game_config).run()
+    """If Space key wasn't pressed, the game will start only once"""
 
 
 if __name__ == "__main__":
