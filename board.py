@@ -125,8 +125,12 @@ class Board:
             return
 
         elif flag:
-            self.marked_mines += -1 if piece.is_marked() else 1
-            piece.toogle_flag()
+            if piece.is_marked():
+                self.marked_mines -= 1
+                piece.toogle_flag()
+            elif (self.marked_mines < self.num_of_mines):
+                self.marked_mines += 1
+                piece.toogle_flag()
 
         elif piece.is_closed():
             piece.open()

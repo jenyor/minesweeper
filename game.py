@@ -42,7 +42,9 @@ class Game:
         self.screen = pygame.display.set_mode(self.sizes)
         running = True
         restart = False
-        stopwatch_image = self.get_stopwatch_image()
+        stopwatch_image = self.get_image("stopwatch")
+        flags_image = self.get_image("flags")
+        pygame.font.init()
 
         while running:
 
@@ -67,6 +69,7 @@ class Game:
                 self.draw()
                 pygame.display.flip()
             self.stopwatch(stopwatch_image)
+            self.flags_left(flags_image)
         self.board.close_all_cells()
         return restart
 
@@ -129,22 +132,20 @@ class Game:
             # We don't need the extension in the sprite name
             self.images[filename.split(".")[0]] = image
 
-    def get_stopwatch_image(self):
-        stopwatch_image = pygame.image.load(os.path.join("sprites", "stopwatch.png"))
-        stopwatch_image = pygame.transform.scale(stopwatch_image, (32, 32))
-        stopwatch_image.set_colorkey('black')
-        return stopwatch_image
+    def get_image(self, path):
+        image = pygame.image.load(os.path.join("sprites", f"{path}.png"))
+        image = pygame.transform.scale(image, (32, 32))
+        return image
 
     def stopwatch(self, stopwatch_image):
         self.screen.fill('black')
-        pygame.font.init()
         clock = pygame.time.Clock()
-        self.screen.blit(stopwatch_image, (self.sizes[0] / 1.4, 8))
+        self.screen.blit(stopwatch_image, (self.sizes[0] / 1.45, 8))
         ticks = pygame.time.get_ticks()
         seconds = int(ticks/1000 % 60)
         minutes = int(ticks/60000 % 24)
         if seconds < 10 and minutes > 0:
-            seconds = f"0{seconds}"
+            seconds = f"0{seconds:2d}"
         if minutes == 0:
             font = pygame.font.SysFont("Times New Roman", 40).render(f"{seconds}", True, 'gray')
         else:
@@ -152,8 +153,13 @@ class Game:
         self.screen.blit(font, (self.sizes[0] / 1.3, 3))
         clock.tick(60)
 
+    def flags_left(self, flags_image):
+        flags_left = self.board.num_of_mines - self.board.marked_mines
+        font = pygame.font.SysFont("Times New Roman", 40).render(f"{flags_left:2d}", True, 'gray')
+        self.screen.blit(flags_image, (self.sizes[0] / 3.7, 8))
+        self.screen.blit(font, (self.sizes[0] / 3.3, 3))
+
     def get_picture_result(self, result):
-        pygame.font.init()
         self.draw()
         pygame.display.flip()
         pygame.time.wait(2000)
