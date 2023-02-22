@@ -145,7 +145,7 @@ class Game:
         seconds = int(ticks/1000 % 60)
         minutes = int(ticks/60000 % 24)
         if seconds < 10 and minutes > 0:
-            seconds = f"0{seconds:2d}"
+            seconds = f"0{seconds}"
         if minutes == 0:
             font = pygame.font.SysFont("Times New Roman", 40).render(f"{seconds}", True, 'gray')
         else:
