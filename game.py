@@ -4,7 +4,6 @@ import pygame
 
 import config
 import board
-import time
 
 
 class GameState(Enum):
@@ -42,6 +41,7 @@ class Game:
         """
         self.screen = pygame.display.set_mode(self.sizes)
         running = True
+        restart = False
 
         while running:
             for event in pygame.event.get():
@@ -54,11 +54,18 @@ class Game:
                     # [2] - the third element of the tuple, which contains a bool value, whether the right button is pressed
                     is_right_click = pygame.mouse.get_pressed()[2]
                     self.handle_click(position, is_right_click)
-
-            self.draw()
-            pygame.display.flip()
-            # Reduce CPU load
-            time.sleep(0.1)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        print("Game restarted")
+                        restart = True
+                    if event.key == pygame.K_ESCAPE:
+                        print("Goodbye")
+                    running = False
+            if self.state == GameState.RUN:
+                self.draw()
+                pygame.display.flip()
+        self.board.close_all_cells()
+        return restart
 
     def handle_click(self, position: tuple[int, int], right_click: bool):
         """
@@ -75,8 +82,7 @@ class Game:
             self.state = GameState.LOSE
         if self.board.found_pure == self.board.get_board_area() - self.board.num_of_mines:
             self.state = GameState.WIN
-
-        print(self.state)
+        self.get_results()
 
     def draw(self):
         """
@@ -118,3 +124,35 @@ class Game:
             image = pygame.transform.scale(image, self.cell_size)
             # We don't need the extension in the sprite name
             self.images[filename.split(".")[0]] = image
+
+    def get_picture_result(self, result):
+        pygame.font.init()
+        self.draw()
+        pygame.display.flip()
+        pygame.time.wait(2000)
+        scrn = pygame.display.set_mode((self.sizes[0], self.sizes[1]))
+        if result == 'win':
+            scrn.fill("black")
+            color = "#159951"
+        else:
+            scrn.fill("black")
+            color = "#800d0d"
+        text = pygame.font.SysFont('Times New Roman', 80).render(f"You {result}!", True, color)
+        text2 = pygame.font.SysFont('Times New Roman', 32).render('Press SPACE to restart, ESC to exit', True, "gray")
+        textRect = text.get_rect()
+        textRect.center = (self.sizes[0]/2, self.sizes[1]/2.6)
+        scrn.blit(text, textRect)
+        textRect.center = (self.sizes[0]/2.3, self.sizes[1]/1.9)
+        scrn.blit(text2, textRect)
+        pygame.display.flip()
+
+    def get_results(self):
+        match self.state:
+            case GameState.WIN:
+                self.get_picture_result("win")
+            case GameState.LOSE:
+                for x in range(0, self.board.get_cells_x()):
+                    for y in range(0, self.board.get_cells_y()):
+                        if self.board.get_cell_in_pos((y, x)).is_mine():
+                            self.board.get_cell_in_pos((y, x)).open()
+                self.get_picture_result("lose")

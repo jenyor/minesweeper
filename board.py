@@ -142,3 +142,8 @@ class Board:
             for neighbor in piece.adjacent_cells:
                 if neighbor.is_pure() and neighbor.is_closed():
                     self.click_cell(neighbor, False)
+
+    def close_all_cells(self):
+        for row in range(self.get_cells_y()):
+            for col in range(self.get_cells_x()):
+                self.get_cell_in_pos((row, col)).close()

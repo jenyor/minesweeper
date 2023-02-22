@@ -26,9 +26,10 @@ def main():
     except Exception as err:
         print(f"\n\033[31m ERROR: {err.args[0]} \n\033[0m")
         sys.exit(1)
-
-    game_config.set_difficulty()
-    game.Game(game_config).run()
+    start = True
+    while start:
+        game_config.set_difficulty()
+        start = game.Game(game_config).run()
 
 
 if __name__ == "__main__":
