@@ -13,6 +13,11 @@ class Config:
         self.difficulty = difficulty
         """ One of the game difficulty presets (easy, medium, hard, custom) """
 
+    """
+    Function to check values. Name of the difficulty should be one of these: easy, medium, hard or custom.
+    Screen size, number of mines and cells should be positive number.
+    Number of mines should be less, than number of fields on the board
+    """
     def check_values(self):
         if (
             self.difficulty != "easy"
@@ -32,6 +37,10 @@ class Config:
         elif self.num_of_mines >= self.cells_in_board[0] * self.cells_in_board[1]:
             raise Exception("Too much mines for this field")
 
+    """
+    Translates difficulty name to specific values of mines and cells.
+    Custom difficulty - entered by the user values of mines, cells and screensize.
+    """
     def set_difficulty(self):
         match self.difficulty:
             case "easy":
