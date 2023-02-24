@@ -20,3 +20,4 @@ show-source = true
 pythonpath = [
   "."
 ]
+markers = ["constructor: construction of objects"]

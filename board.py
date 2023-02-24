@@ -127,10 +127,9 @@ class Board:
         elif flag:
             if piece.is_marked():
                 self.marked_mines -= 1
-                piece.toogle_flag()
             elif self.marked_mines < self.num_of_mines:
                 self.marked_mines += 1
-                piece.toogle_flag()
+            piece.toogle_flag()
             """
             It makes impossible to place more flags than number of mines,
             and only if one of the previous flags were toggled,
