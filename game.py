@@ -200,11 +200,11 @@ class Game:
         # field for the text
         textRect = text.get_rect()
         # result will be shown higher than info about restarting game
-        textRect.center = (self.sizes[0] / 2, self.sizes[1] / 2.6)
+        textRect.center = (self.sizes[0] // 2, int(self.sizes[1] / 2.6))
         scrn.blit(text, textRect)
-        textRect.center = (self.sizes[0] / 2, self.sizes[1] / 1.7)
+        textRect.center = (self.sizes[0] // 2, int(self.sizes[1] / 1.7))
         scrn.blit(text2, textRect)
-        textRect.center = (self.sizes[0] / 2, self.sizes[1] / 1.4)
+        textRect.center = (self.sizes[0] // 2, int(self.sizes[1] / 1.4))
         scrn.blit(text3, textRect)
         pygame.display.flip()
 

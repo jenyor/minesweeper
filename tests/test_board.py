@@ -1,3 +1,4 @@
+import pytest
 from itertools import chain
 
 from board import Board
@@ -5,15 +6,22 @@ import config
 from cell import Cell
 
 
-def test_generate_random():
-    MAGIC_NUM = 10
-    board1 = Board.generate_random(config.Config((MAGIC_NUM, MAGIC_NUM), MAGIC_NUM, (1, 1), "custom"))
+@pytest.mark.parametrize("num_mines", [2, 10])
+@pytest.mark.parametrize("cells_in_board", [(3, 5), (100, 100)])
+def test_generate_random(num_mines, cells_in_board):
+    board1 = Board.generate_random(config.Config(cells_in_board, num_mines, (1, 1), "custom"))
 
     num_of_mines = 0
     for piece in chain.from_iterable(board1.get_all_cells()):
         num_of_mines += piece.is_mine()
 
     assert num_of_mines == board1.num_of_mines
+
+
+@pytest.mark.parametrize("num_mines, cells_in_board", [(20, (4, 5)), (200, (5, 5))])
+def test_generate_random_fail(num_mines, cells_in_board):
+    with pytest.raises(Exception):
+        board1 = Board.generate_random(config.Config(cells_in_board, num_mines, (1, 1), "custom"))
 
 
 def test_find_adjacent_cells():

@@ -15,3 +15,8 @@ count = true
 exit-zero = true
 statistics = true
 show-source = true
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "."
+]
