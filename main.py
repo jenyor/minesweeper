@@ -38,7 +38,6 @@ def main():
     start = True
     """Returns true if Space key pressed. Space is used for restart game with the same configuration and board"""
     while start:
-        game_config.set_difficulty()
         start = game.Game(game_config).run()
     """If Space key wasn't pressed, the game will start only once"""
 

@@ -16,6 +16,7 @@ class Config:
         self.difficulty = difficulty
         """ One of the game difficulty presets (easy, medium, hard, custom) """
 
+        self.set_difficulty()
         self.is_correct_values()
 
     """
