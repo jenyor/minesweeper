@@ -28,10 +28,10 @@ class Board:
         """
         Generates a board by randomly placing mines. Use instead of the constructor `__init__`
         """
-        inst = cls(config.cells_in_board, config.num_of_mines)
-
+        # The empty list is added to ensure that a new list object is created for each instance
+        # otherwise the cells parameter would be shared between all instances.
+        inst = cls(config.cells_in_board, config.num_of_mines, [])
         inst.generate_cells()
-
         return inst
 
     def get_cells_x(self):

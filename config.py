@@ -16,14 +16,15 @@ class Config:
         self.difficulty = difficulty
         """ One of the game difficulty presets (easy, medium, hard, custom) """
 
+        self.is_correct_values()
+
     """
     Function to check values. Name of the difficulty should be one of these: easy, medium, hard or custom.
     Screen size, number of mines and cells should be positive number.
     Number of mines should be less, than number of fields on the board
     """
 
-    def check_values(self):
-        print(self.cells_in_board[0])
+    def is_correct_values(self):
         if (
             self.difficulty != "easy"
             and self.difficulty != "medium"
