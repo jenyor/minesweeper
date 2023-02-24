@@ -128,7 +128,7 @@ class Board:
             if piece.is_marked():
                 self.marked_mines -= 1
                 piece.toogle_flag()
-            elif (self.marked_mines < self.num_of_mines):
+            elif self.marked_mines < self.num_of_mines:
                 self.marked_mines += 1
                 piece.toogle_flag()
             """
@@ -156,4 +156,5 @@ class Board:
         for row in range(self.get_cells_y()):
             for col in range(self.get_cells_x()):
                 self.get_cell_in_pos((row, col)).close()
+
     """Function that closes all cells. Program runs it when we restart the game by pressing Space key"""
