@@ -130,11 +130,9 @@ class Board:
             elif self.marked_mines < self.num_of_mines:
                 self.marked_mines += 1
             piece.toogle_flag()
-            """
-            It makes impossible to place more flags than number of mines,
-            and only if one of the previous flags were toggled,
-            it allows to place one new flag
-            """
+            # It makes impossible to place more flags than number of mines,
+            # and only if one of the previous flags were toggled,
+            # it allows to place one new flag
 
         elif piece.is_closed():
             piece.open()
@@ -152,8 +150,7 @@ class Board:
                     self.click_cell(neighbor, False)
 
     def close_all_cells(self):
+        """Function that closes all cells. Program runs it when we restart the game by pressing Space key"""
         for row in range(self.get_cells_y()):
             for col in range(self.get_cells_x()):
                 self.get_cell_in_pos((row, col)).close()
-
-    """Function that closes all cells. Program runs it when we restart the game by pressing Space key"""

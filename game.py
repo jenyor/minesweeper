@@ -42,12 +42,12 @@ class Game:
         self.screen = pygame.display.set_mode(self.sizes)
         running = True
         restart = False
-        """Value restart returns true, when Space key pressed, and sends it to main.py"""
+        # Value restart returns true, when Space key pressed, and sends it to main.py
         stopwatch_image = self.get_image("stopwatch")
         flags_image = self.get_image("flags")
-        """Gets images for stopwatch and flags only once per game run, unlike draw() method, which runs every turn"""
+        # Gets images for stopwatch and flags only once per game run, unlike draw() method, which runs every turn
         pygame.font.init()
-        """Initialization of fonts, used for results screen, stopwatch and flags counter"""
+        # Initialization of fonts, used for results screen, stopwatch and flags counter
 
         while running:
             for event in pygame.event.get():
@@ -140,16 +140,18 @@ class Game:
             # We don't need the extension in the sprite name
             self.images[filename.split(".")[0]] = image
 
-    """Gets images for stopwatch and flag counter. It runs only once per game for each of them"""
-
     def get_image(self, path):
+        """
+        Gets images for stopwatch and flag counter. It runs only once per game for each of them
+        """
         image = pygame.image.load(os.path.join("sprites", f"{path}.png"))
         image = pygame.transform.scale(image, (32, 32))
         return image
 
-    """Function for stopwatch, counts time from the start of the game"""
-
     def stopwatch(self, stopwatch_image):
+        """
+        Function for stopwatch, counts time from the start of the game
+        """
         self.screen.fill("black")
         clock = pygame.time.Clock()
         # Creates stopwatch image in the right half of the screen
@@ -170,18 +172,20 @@ class Game:
         self.screen.blit(font, (self.sizes[0] / 1.3, 3))
         clock.tick(60)
 
-    """Function for flags counter. It shows how much flags can be placed"""
-
     def flags_left(self, flags_image):
+        """
+        Function for flags counter. It shows how much flags can be placed
+        """
         # Number of flags left is a difference between number of mines and used flags
         flags_left = self.board.num_of_mines - self.board.marked_mines
         font = pygame.font.SysFont("Times New Roman", 40).render(f"{flags_left:2d}", True, "gray")
         self.screen.blit(flags_image, (self.sizes[0] / 3.8, 8))
         self.screen.blit(font, (self.sizes[0] / 3.3, 3))
 
-    """Draws text for result: win or lose"""
-
     def get_picture_result(self, result):
+        """
+        Draws text for result: win or lose
+        """
         # shows the mines if we lose
         self.draw()
         pygame.display.flip()
@@ -208,9 +212,10 @@ class Game:
         scrn.blit(text3, textRect)
         pygame.display.flip()
 
-    """Gets results for the game. GameState contains info about game state"""
-
     def get_results(self):
+        """
+        Gets results for the game. GameState contains info about game state
+        """
         match self.state:
             case GameState.WIN:
                 self.get_picture_result("win")
