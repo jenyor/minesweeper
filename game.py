@@ -83,7 +83,6 @@ class Game:
     def handle_click(self, position: tuple[int, int], right_click: bool):
         """
         Processes the event - pressing a button on a certain pixel on the screen.
-
         According to the coordinates, it finds the necessary cell on the board (`board`) and calls the click function for it
         """
         # Index of the cell according to the passed coordinates. 50 is the height of top panel with stopwatch and flag counter
@@ -102,7 +101,6 @@ class Game:
     def draw(self):
         """
         Displays the game image on the screen
-
         Draws all game fields, selecting an image according to the state of the cell
         """
         for row in range(self.board.get_cells_y()):
@@ -127,9 +125,7 @@ class Game:
                 self.screen.blit(image, (col * self.cell_size[0], 50 + row * self.cell_size[1]))
 
     def load_images(self):
-        """
-        Loads sprites from the local device into a dictionary, transforming them to the required size
-        """
+        """Loads sprites from the local device into a dictionary, transforming them to the required size"""
         self.images = {}
         for filename in os.listdir("sprites"):
             if not filename.endswith(".png"):
@@ -140,16 +136,14 @@ class Game:
             # We don't need the extension in the sprite name
             self.images[filename.split(".")[0]] = image
 
-    """Gets images for stopwatch and flag counter. It runs only once per game for each of them"""
-
     def get_image(self, path):
+        """Gets images for stopwatch and flag counter. It runs only once per game for each of them"""
         image = pygame.image.load(os.path.join("sprites", f"{path}.png"))
         image = pygame.transform.scale(image, (32, 32))
         return image
 
-    """Function for stopwatch, counts time from the start of the game"""
-
     def stopwatch(self, stopwatch_image):
+        """Function for stopwatch, counts time from the start of the game"""
         self.screen.fill("black")
         clock = pygame.time.Clock()
         # Creates stopwatch image in the right half of the screen
@@ -170,18 +164,16 @@ class Game:
         self.screen.blit(font, (self.sizes[0] / 1.3, 3))
         clock.tick(60)
 
-    """Function for flags counter. It shows how much flags can be placed"""
-
     def flags_left(self, flags_image):
+        """Function for flags counter. It shows how much flags can be placed"""
         # Number of flags left is a difference between number of mines and used flags
         flags_left = self.board.num_of_mines - self.board.marked_mines
         font = pygame.font.SysFont("Times New Roman", 40).render(f"{flags_left:2d}", True, "gray")
         self.screen.blit(flags_image, (self.sizes[0] / 3.8, 8))
         self.screen.blit(font, (self.sizes[0] / 3.3, 3))
 
-    """Draws text for result: win or lose"""
-
     def get_picture_result(self, result):
+        """Draws text for result: win or lose"""
         # shows the mines if we lose
         self.draw()
         pygame.display.flip()
@@ -208,9 +200,8 @@ class Game:
         scrn.blit(text3, textRect)
         pygame.display.flip()
 
-    """Gets results for the game. GameState contains info about game state"""
-
     def get_results(self):
+        """Gets results for the game. GameState contains info about game state"""
         match self.state:
             case GameState.WIN:
                 self.get_picture_result("win")

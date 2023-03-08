@@ -19,13 +19,12 @@ class Config:
         self.set_difficulty()
         self.is_correct_values()
 
-    """
-    Function to check values. Name of the difficulty should be one of these: easy, medium, hard or custom.
-    Screen size, number of mines and cells should be positive number.
-    Number of mines should be less, than number of fields on the board
-    """
-
     def is_correct_values(self):
+        """
+        Function to check values. Name of the difficulty should be one of these: easy, medium, hard or custom.
+        Screen size, number of mines and cells should be positive number.
+        Number of mines should be less, than number of fields on the board
+        """
         if (
             self.difficulty != "easy"
             and self.difficulty != "medium"
@@ -44,12 +43,11 @@ class Config:
         elif self.num_of_mines >= self.cells_in_board[0] * self.cells_in_board[1]:
             raise Exception("Too much mines for this field")
 
-    """
-    Translates difficulty name to specific values of mines and cells.
-    Custom difficulty - entered by the user values of mines, cells and screensize.
-    """
-
     def set_difficulty(self):
+        """
+        Translates difficulty name to specific values of mines and cells.
+        Custom difficulty - entered by the user values of mines, cells and screensize.
+        """
         if self.difficulty != "custom":
             match self.difficulty:
                 case "easy":
@@ -63,10 +61,9 @@ class Config:
                     self.cells_in_board = (22, 22)
             self.calculate_screen(self.cells_in_board)
 
-    """Function for calculating screen size depending on how much fields do we have"""
-
     def calculate_screen(self, cells_in_board: tuple[int, int]):
-        # if we have not so much fields, they will be a little biggers
+        """Function for calculating screen size depending on how much fields do we have"""
+        # if we have not so much fields, they will be a little bigger
         if cells_in_board[0] < 12 and cells_in_board[1] < 12:
             self.screen_size = (self.cells_in_board[1] * 50, self.cells_in_board[0] * 50)
         else:
