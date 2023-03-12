@@ -32,12 +32,13 @@ def test_init_incorrect_difficulty(difficulty):
 def test_init_correct_arguments(cells_in_board, num_of_mines, screen_size, difficulty):
     Config(cells_in_board, num_of_mines, screen_size, difficulty)
 
+
 @pytest.mark.constructor
 @pytest.mark.parametrize("difficulty", ["easy", "medium", "hard", "custom"])
 def test_set_difficulty(difficulty):
     test_config = Config((10, 10), 50, (500, 500), difficulty)
     test_config.set_difficulty()
-    match(difficulty):
+    match difficulty:
         case "easy":
             assert test_config.num_of_mines == 10 and test_config.cells_in_board == (9, 9)
         case "medium":
@@ -47,12 +48,13 @@ def test_set_difficulty(difficulty):
         case "custom":
             assert test_config.num_of_mines == 50 and test_config.cells_in_board == (10, 10)
 
+
 @pytest.mark.constructor
 @pytest.mark.parametrize("cells_in_board", [(10, 10), (25, 10), (20, 20)])
 def test_calculate_screen(cells_in_board):
     test_config = Config(cells_in_board, 5, (500, 500), "custom")
     test_config.calculate_screen(cells_in_board)
-    if(cells_in_board[0] * cells_in_board[1] <= 144):
+    if cells_in_board[0] * cells_in_board[1] <= 144:
         assert test_config.screen_size[0] == cells_in_board[1] * 50 and test_config.screen_size[1] == cells_in_board[0] * 50
     else:
         assert test_config.screen_size[0] == cells_in_board[1] * 40 and test_config.screen_size[1] == cells_in_board[0] * 40
