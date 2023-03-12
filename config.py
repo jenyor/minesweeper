@@ -64,13 +64,13 @@ class Config:
     def calculate_screen(self, cells_in_board: tuple[int, int]):
         """Function for calculating screen size depending on how much fields do we have"""
         # if we have not so much fields, they will be a little biggers
-        if cells_in_board[0] < 12 and cells_in_board[1] < 12:
+        if cells_in_board[0] * cells_in_board[1] <= 144:
             self.screen_size = (self.cells_in_board[1] * 50, self.cells_in_board[0] * 50)
         else:
             self.screen_size = (self.cells_in_board[1] * 40, self.cells_in_board[0] * 40)
             # to fit in the users screen
-            if self.screen_size[0] > 900:
-                self.screen_size = (900, self.screen_size[1])
-            if self.screen_size[1] > 900:
-                self.screen_size = (self.screen_size[0], 900)
+            if self.screen_size[0] > 1080:
+                self.screen_size = (1080, self.screen_size[1])
+            if self.screen_size[1] > 1080:
+                self.screen_size = (self.screen_size[0], 1080)
         return self.screen_size
