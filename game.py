@@ -144,9 +144,12 @@ class Game:
         """
         Gets images for stopwatch and flag counter. It runs only once per game for each of them
         """
-        image = pygame.image.load(os.path.join("sprites", f"{path}.png"))
-        image = pygame.transform.scale(image, (32, 32))
-        return image
+        if path == "stopwatch" or path == "flags":
+            image = pygame.image.load(os.path.join("sprites", f"{path}.png"))
+            image = pygame.transform.scale(image, (32, 32))
+            return image
+        else:
+            raise Exception("There is no such sprite")
 
     def stopwatch(self, stopwatch_image):
         """
